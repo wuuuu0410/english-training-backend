@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- ===== Parent ===== -->
+  <parent>
+    <groupId>com.megabank</groupId>
+    <artifactId>english_backend</artifactId>
+    <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <!-- ===== Module Info ===== -->
+  <artifactId>english-dao</artifactId>
+  <name>english-dao</name>
+  <description>英文訓練系統-DAO</description>
+
+  <!-- ===== Dependencies ===== -->
+  <dependencies>
+    <!-- 共用模組（Exception / Enum / DTO，若尚未拆可先拿掉） -->
+    <dependency>
+      <groupId>com.megabank</groupId>
+      <artifactId>english-core</artifactId>
+      <version>${revision}</version>
+    </dependency>
+
+    <!-- Spring Data JPA（就算你用 Native SQL，也建議用它管理 Entity / Tx） -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <!-- PostgreSQL JDBC Driver -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+
+    <!-- 測試（可選） -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>

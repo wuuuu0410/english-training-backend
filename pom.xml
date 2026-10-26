@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- ===== 基本資訊 ===== -->
+  <groupId>com.megabank</groupId>
+  <artifactId>english_backend</artifactId>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
+
+  <name>english_backend</name>
+  <description>英文訓練系統（Multi-Module Backend）</description>
+
+  <!-- ===== 子模組 ===== -->
+  <modules>
+    <module>english-core</module>
+    <module>english-dao</module>
+    <module>english-business</module>
+    <module>english-facade</module>
+    <module>english-controller</module>
+    <module>english-gateway</module>
+<!--    <module>english-batch</module>-->
+  </modules>
+
+  <!-- ===== 全域版本設定 ===== -->
+  <properties>
+    <!-- 專案版本 -->
+    <revision>2025121601</revision>
+
+    <!-- Java -->
+    <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Spring Boot（Java 21 建議 3.3.x） -->
+    <spring-boot.version>3.3.5</spring-boot.version>
+
+    <!-- Plugin versions -->
+    <surefire.version>3.2.5</surefire.version>
+    <jacoco.version>0.8.11</jacoco.version>
+
+    <!-- Test JVM args -->
+    <argLine>
+      --add-opens java.base/java.lang=ALL-UNNAMED
+      -Dfile.encoding=UTF-8
+    </argLine>
+  </properties>
+
+  <!-- ===== 依賴版本管理（不直接引依賴） ===== -->
+  <dependencyManagement>
+    <dependencies>
+      <!-- Spring Boot BOM -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>2.20.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>2.20.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <!-- ===== Plugin 管理（不強制套用） ===== -->
+  <build>
+    <pluginManagement>
+      <plugins>
+
+        <!-- Compiler -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <release>${java.version}</release>
+          </configuration>
+        </plugin>
+
+        <!-- Unit Test -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${surefire.version}</version>
+          <configuration>
+            <argLine>${argLine}</argLine>
+            <useSystemClassLoader>false</useSystemClassLoader>
+            <reuseForks>true</reuseForks>
+          </configuration>
+        </plugin>
+
+        <!-- Code Coverage -->
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco.version}</version>
+          <executions>
+            <execution>
+              <id>prepare-agent</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- Spring Boot (version managed centrally) -->
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>
