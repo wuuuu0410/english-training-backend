@@ -33,8 +33,8 @@ public class WordBankSvcImpl implements WordBankSvc {
   public WordBank createOne(WordCreateCommand cmd) {
     // Trim all string fields to remove leading and trailing whitespace
     StringUtils.normalizeStringFields(cmd);
-    // Validate required fields
-    StringUtils.validateNotBlank(cmd, ENGLISH_WORD, PART_OF_SPEECH, CHINESE_MEANING);
+    // Validate required fields (Only englishWord is strictly required; partOfSpeech and chineseMeaning are optional)
+    StringUtils.validateNotBlank(cmd, ENGLISH_WORD);
 
     WordBank bank = BeanUtils.convert(cmd, WordBank.class);
     bank.setMemorizedLevel(0);
