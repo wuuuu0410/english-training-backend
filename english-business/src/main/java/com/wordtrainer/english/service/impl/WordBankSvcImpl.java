@@ -11,8 +11,10 @@ import com.wordtrainer.english.utils.bean.BeanUtils;
 import com.wordtrainer.english.utils.string.StringUtils;
 import jakarta.transaction.Transactional;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,10 @@ public class WordBankSvcImpl implements WordBankSvc {
     StringUtils.normalizeStringFields(cmd);
     // Validate required fields (Only englishWord is strictly required; partOfSpeech and chineseMeaning are optional)
     StringUtils.validateNotBlank(cmd, ENGLISH_WORD);
+    // Duplicate words (case-insensitive) are not allowed
+    if (wordBankRepo.existsByEnglishWordIgnoreCase(cmd.getEnglishWord())) {
+      throw new IllegalArgumentException("Word already exists: " + cmd.getEnglishWord());
+    }
 
     WordBank bank = BeanUtils.convert(cmd, WordBank.class);
     bank.setMemorizedLevel(0);
@@ -46,7 +52,18 @@ public class WordBankSvcImpl implements WordBankSvc {
   @Override
   @Transactional
   public List<WordBank> createBatch(List<WordCreateCommand> cmds) {
+    // Skip words that already exist in the bank or appear earlier in the same batch
+    Set<String> seen = new HashSet<>(wordBankRepo.findAllEnglishWordsLowerCase());
     List<WordBank> entities = cmds.stream()
+        .map(StringUtils::normalizeStringFields)
+        .peek(cmd -> StringUtils.validateNotBlank(cmd, ENGLISH_WORD))
+        .filter(cmd -> {
+          boolean added = seen.add(cmd.getEnglishWord().toLowerCase());
+          if (!added) {
+            log.info("Skip duplicate word: {}", cmd.getEnglishWord());
+          }
+          return added;
+        })
         .map(cmd -> BeanUtils.convert(cmd, WordBank.class))
         .peek(e -> {
           e.setMemorizedLevel(0);
@@ -70,6 +87,10 @@ public class WordBankSvcImpl implements WordBankSvc {
 
     WordBank e = wordBankRepo.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("No data found for id=" + id));
+    // Renaming to a word that another entry already uses is not allowed
+    if (wordBankRepo.existsByEnglishWordIgnoreCaseAndWordIdNot(cmd.getEnglishWord(), id)) {
+      throw new IllegalArgumentException("Word already exists: " + cmd.getEnglishWord());
+    }
 
     e.setEnglishWord(cmd.getEnglishWord());
     e.setPartOfSpeech(cmd.getPartOfSpeech());

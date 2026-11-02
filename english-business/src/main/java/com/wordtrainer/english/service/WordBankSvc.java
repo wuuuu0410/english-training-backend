@@ -16,6 +16,7 @@ public interface WordBankSvc {
 
   /**
    * Creates a single word entry in the Word Bank.
+   * Throws an exception if the word already exists (case-insensitive).
    *
    * @param cmd the command containing the word data
    * @return the saved {@link WordBank} entity
@@ -24,6 +25,7 @@ public interface WordBankSvc {
 
   /**
    * Creates multiple word entries in a batch operation.
+   * Words that already exist (case-insensitive) or repeat within the batch are skipped.
    *
    * @param cmds a list of commands containing word data
    * @return a list of saved {@link WordBank} entities
@@ -39,6 +41,7 @@ public interface WordBankSvc {
 
   /**
    * Updates an existing word entry.
+   * Throws an exception if another entry already uses the same word (case-insensitive).
    *
    * @param id  the ID of the word to update
    * @param cmd the command containing updated word data

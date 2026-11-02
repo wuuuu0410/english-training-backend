@@ -12,6 +12,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface WordBankRepo extends JpaRepository<WordBank, Long> {
 
+  boolean existsByEnglishWordIgnoreCase(String englishWord);
+
+  boolean existsByEnglishWordIgnoreCaseAndWordIdNot(String englishWord, Long wordId);
+
+  @Query("select lower(w.englishWord) from WordBank w")
+  List<String> findAllEnglishWordsLowerCase();
+
   @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Transactional
   @Query("""
